@@ -22,7 +22,7 @@ DEBUG ?= 2
 SMP_MAX_CPUS ?= 4
 SMP_CPU_CLUSTER_SHIFT ?= 2
 
-TARGET := tegra186
+TARGET := t186
 
 # Arm64 address space configuration
 KERNEL_ASPACE_BASE := 0xffffffffe0000000
