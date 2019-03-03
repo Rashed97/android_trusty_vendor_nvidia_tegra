@@ -41,7 +41,7 @@
 #define SMC_REGISTERS_TRASHED "ip"
 #endif
 
-ulong generic_arm64_smc(ulong r0, ulong r1, ulong r2, ulong r3) {
+ulong tegra_smc(ulong r0, ulong r1, ulong r2, ulong r3) {
     register ulong _r0 __asm__(SMC_ARG0) = r0;
     register ulong _r1 __asm__(SMC_ARG1) = r1;
     register ulong _r2 __asm__(SMC_ARG2) = r2;

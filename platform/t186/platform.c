@@ -81,7 +81,7 @@ void platform_init_mmu_mappings(void) {
     pmm_add_arena(&ram_arena);
 }
 
-static void generic_arm64_map_regs(const char* name,
+static void tegra_map_regs(const char* name,
                                    vaddr_t vaddr,
                                    paddr_t paddr,
                                    size_t size) {
@@ -96,22 +96,22 @@ static void generic_arm64_map_regs(const char* name,
     }
 }
 
-static paddr_t generic_arm64_get_reg_base(int reg) {
+static paddr_t tegra_get_reg_base(int reg) {
 #if ARCH_ARM64
-    return generic_arm64_smc(SMC_FC64_GET_REG_BASE, reg, 0, 0);
+    return tegra_smc(SMC_FC64_GET_REG_BASE, reg, 0, 0);
 #else
-    return generic_arm64_smc(SMC_FC_GET_REG_BASE, reg, 0, 0);
+    return tegra_smc(SMC_FC_GET_REG_BASE, reg, 0, 0);
 #endif
 }
 
 static void platform_after_vm_init(uint level) {
-    paddr_t gicc = generic_arm64_get_reg_base(SMC_GET_GIC_BASE_GICC);
-    paddr_t gicd = generic_arm64_get_reg_base(SMC_GET_GIC_BASE_GICD);
+    paddr_t gicc = tegra_get_reg_base(SMC_GET_GIC_BASE_GICC);
+    paddr_t gicd = tegra_get_reg_base(SMC_GET_GIC_BASE_GICD);
 
     dprintf(INFO, "gicc 0x%lx, gicd 0x%lx\n", gicc, gicd);
 
-    generic_arm64_map_regs("gicc", GICC_BASE_VIRT, gicc, GICC_SIZE);
-    generic_arm64_map_regs("gicd", GICD_BASE_VIRT, gicd, GICD_SIZE);
+    tegra_map_regs("gicc", GICC_BASE_VIRT, gicc, GICC_SIZE);
+    tegra_map_regs("gicd", GICD_BASE_VIRT, gicd, GICD_SIZE);
 
     /* initialize the interrupt controller */
     arm_gic_init();

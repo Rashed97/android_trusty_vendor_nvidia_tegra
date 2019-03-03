@@ -45,4 +45,4 @@
 #define SMC_FC64_GET_REG_BASE \
     SMC_FASTCALL64_NR(SMC_ENTITY_PLATFORM_MONITOR, 0x1)
 
-ulong generic_arm64_smc(ulong r0, ulong r1, ulong r2, ulong r3);
+ulong tegra_smc(ulong r0, ulong r1, ulong r2, ulong r3);

@@ -27,7 +27,7 @@
 #include "smc.h"
 
 void platform_dputc(char c) {
-    generic_arm64_smc(SMC_FC_DEBUG_PUTC, c, 0, 0);
+    tegra_smc(SMC_FC_DEBUG_PUTC, c, 0, 0);
 }
 
 int platform_dgetc(char* c, bool wait) {
