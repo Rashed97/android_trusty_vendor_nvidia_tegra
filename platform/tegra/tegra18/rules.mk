@@ -21,9 +21,14 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-LOCAL_DIR := $(GET_LOCAL_DIR)
-
-GLOBAL_INCLUDES += $(LOCAL_DIR)/include
-
-PLATFORM := tegra
-PLATFORM_SOC := tegra18
+# the following is the memory that trusty is loaded into
+# (tegra's bl32 reserved memory) which has an alignment of
+# 0x400000
+#MEMBASE := 0x276000000
+#MEMSIZE := 0x600000
+# this is tegra18's TZDRAM
+MEMBASE := 0x30000000
+MEMSIZE := 0x40000
+# this is the offset for the entry point for the kernel
+# when it resides in the bl32 memory
+KERNEL_LOAD_OFFSET := 0x400000

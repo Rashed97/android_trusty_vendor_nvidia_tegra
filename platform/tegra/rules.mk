@@ -28,27 +28,20 @@ MODULE := $(LOCAL_DIR)
 ARCH := arm64
 ARM_CPU := armv8-a
 WITH_SMP := 1
-# the following is the memory that trusty is loaded into
-# (tegra's bl32 reserved memory) which has an alignment of
-# 0x400000
-#MEMBASE := 0x276000000
-#MEMSIZE := 0x600000
-# this is tegra's TZDRAM
-MEMBASE := 0x30000000
-MEMSIZE := 0x40000
-# this is the offset for the entry point for the kernel
-# when it resides in the bl32 memory
-KERNEL_LOAD_OFFSET := 0x400000
-CFG_LOG_REG_BASE := UART0_BASE
-CFG_LOG_BAUDRATE := 115200
+
+COMMON_DIR := $(LOCAL_DIR)/common
+PLATFORM_SOC_DIR := $(LOCAL_DIR)/$(PLATFORM_SOC)
 
 GLOBAL_INCLUDES += \
-	$(LOCAL_DIR)/include
+	$(COMMON_DIR)/include \
+	$(PLATFORM_SOC_DIR)/include
 
 MODULE_SRCS += \
-	$(LOCAL_DIR)/debug.c \
-	$(LOCAL_DIR)/platform.c \
-	$(LOCAL_DIR)/smc.c \
+	$(COMMON_DIR)/debug.c \
+	$(COMMON_DIR)/platform.c \
+	$(COMMON_DIR)/smc.c
+
+include $(PLATFORM_SOC_DIR)/rules.mk
 
 MODULE_DEPS += \
 	dev/interrupt/arm_gic \
@@ -58,7 +51,7 @@ GLOBAL_DEFINES += \
 	MEMBASE=$(MEMBASE) \
 	MEMSIZE=$(MEMSIZE) \
 	KERNEL_LOAD_OFFSET=$(KERNEL_LOAD_OFFSET) \
-	MMU_WITH_TRAMPOLINE=1 \
+	MMU_WITH_TRAMPOLINE=1
 
 LINKER_SCRIPT += \
 	$(BUILDDIR)/system-onesegment.ld
