@@ -27,6 +27,7 @@
 #include <kernel/vm.h>
 #include <lk/init.h>
 #include <platform/gic.h>
+#include <platform/tegra_debug.h>
 #include <string.h>
 
 #include "smc.h"
@@ -59,6 +60,13 @@ static pmm_arena_t ram_arena = {.name = "ram",
                                 .base = MEMBASE + KERNEL_LOAD_OFFSET,
                                 .size = MEMSIZE,
                                 .flags = PMM_ARENA_FLAG_KMAP};
+
+uint32_t debug_uart_id = DEFAULT_DEBUG_PORT;
+
+void platform_early_init(void)
+{
+       	platform_init_debug_port(debug_uart_id);
+}
 
 void platform_init_mmu_mappings(void) {
     /* go through mmu_initial_mapping to find dynamic entry
