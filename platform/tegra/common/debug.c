@@ -42,8 +42,12 @@ static unsigned long uart_base[] = {
 	TEGRA_UARTC_BASE,
 	TEGRA_UARTD_BASE,
 	TEGRA_UARTE_BASE,
+#ifdef TEGRA_UARTF_BASE
 	TEGRA_UARTF_BASE,
+#endif
+#ifdef TEGRA_UARTG_BASE
 	TEGRA_UARTG_BASE
+#endif
 };
 
 static unsigned int debug_port;
