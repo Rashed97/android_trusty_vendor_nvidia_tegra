@@ -27,6 +27,7 @@
 #include <kernel/vm.h>
 #include <lk/init.h>
 #include <platform/gic.h>
+#include <platform/memmap.h>
 #include <platform/tegra_debug.h>
 #include <string.h>
 
@@ -52,6 +53,13 @@ struct mmu_initial_mapping mmu_initial_mappings[] = {
          .size = MEMSIZE,
          .flags = MMU_INITIAL_MAPPING_FLAG_DYNAMIC,
          .name = "ram"},
+
+        /* This is the physical UART device mapping */
+        {.phys = TEGRA_UARTA_BASE,
+         .virt = KERNEL_BASE + KERNEL_LOAD_OFFSET + TEGRA_UARTA_BASE,
+         .size = TEGRA_UARTA_SIZE,
+         .flags = MMU_INITIAL_MAPPING_FLAG_DEVICE,
+         .name = "uart" },
 
         /* null entry to terminate the list */
         {0, 0, 0, 0, 0}};
@@ -112,6 +120,20 @@ static paddr_t tegra_get_reg_base(int reg) {
 #endif
 }
 
+static void platform_during_vm_init(uint level) {
+    paddr_t paddr = ROUNDDOWN(TEGRA_UARTA_BASE, PAGE_SIZE);
+    void *vptr;
+    status_t err = -1;
+
+    /* Map UART port */
+    err = vmm_alloc_physical(vmm_get_kernel_aspace(), "uart",
+                             PAGE_SIZE, &vptr, PAGE_SIZE_SHIFT, paddr,
+                             0, ARCH_MMU_FLAG_UNCACHED_DEVICE);
+    if (err) {
+        dprintf(CRITICAL, "%s: failed to map UART port %d\n", __func__, err);
+    }
+}
+
 static void platform_after_vm_init(uint level) {
     paddr_t gicc = tegra_get_reg_base(SMC_GET_GIC_BASE_GICC);
     paddr_t gicd = tegra_get_reg_base(SMC_GET_GIC_BASE_GICD);
@@ -128,4 +150,5 @@ static void platform_after_vm_init(uint level) {
     arm_generic_timer_init(ARM_GENERIC_TIMER_INT, 0);
 }
 
-LK_INIT_HOOK(platform_after_vm, platform_after_vm_init, LK_INIT_LEVEL_VM + 1);
+LK_INIT_HOOK(platform_during_vm, platform_during_vm_init, LK_INIT_LEVEL_VM + 1);
+LK_INIT_HOOK(platform_after_vm, platform_after_vm_init, LK_INIT_LEVEL_VM + 2);
